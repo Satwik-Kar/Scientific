@@ -18,6 +18,8 @@ const MainActivity = () => {
   let cosOperator;
   let tanOperator;
   let factOperator;
+  let logOperator;
+  let lnOperator;
 
   const [mainText, setmainText] = useState('');
   const [result, setResult] = useState('');
@@ -76,7 +78,9 @@ const MainActivity = () => {
     cosOperator = occurencesIndexes(string, 'cos(', true);
     tanOperator = occurencesIndexes(string, 'tan(', true);
     factOperator = occurencesIndexes(string, '!', false);
-    
+    logOperator = occurencesIndexes(string, 'log(', true);
+    lnOperator = occurencesIndexes(string, 'ln(', true);
+
     let divideRegex = /(\-)?\d+(\d*\.?\d+)?\/\d+(\d*\.?\d+)?/g;
     let minusRegex = /(\-)?\d+(\d*\.?\d+)?\-\d+(\d*\.?\d+)?/g;
     let multiplyRegex = /(\-)?\d+(\d*\.?\d+)?\*\d+(\d*\.?\d+)?/g;
@@ -90,6 +94,10 @@ const MainActivity = () => {
     let cosRegexWithoutOperator = /cos(\-)?\d+(\d*\.?\d+)?/g;
     let tanRegex = /tan\((\-)?\d+(\d*\.?\d+)?\)/g;
     let tanRegexWithoutOperator = /tan(\-)?\d+(\d*\.?\d+)?/g;
+    let logRegex = /log\((\-)?\d+(\d*\.?\d+)?\)/g;
+    let logRegexWithoutOperator = /log(\-)?\d+(\d*\.?\d+)?/g;
+    let lnRegex = /ln\((\-)?\d+(\d*\.?\d+)?\)/g;
+    let lnRegexWithoutOperator = /ln(\-)?\d+(\d*\.?\d+)?/g;
     console.log('exponent10Operators' + exponent10Operator);
     if (exponent10Operator.length != 0) {
       let E = string.match(exponent10Regex);
@@ -139,10 +147,10 @@ const MainActivity = () => {
         }
       }
     }
-    try{
-      if(factOperator.length != 0){
+    try {
+      if (factOperator.length != 0) {
         let F = string.match(factRegex);
-  
+
         if (F.length != 0) {
           for (let z = 0; z < F.length; z++) {
             let item = F[z];
@@ -155,10 +163,10 @@ const MainActivity = () => {
           }
         }
       }
-    }catch(e){
+    } catch (e) {
       console.warn(e);
     }
-     
+
     try {
       if (sinOperator.length != 0) {
         console.log('started-with' + sinOperator.length);
@@ -208,6 +216,42 @@ const MainActivity = () => {
             console.log('cos-item:' + item);
             let value = item.replace('cos(', '').replace(')', '');
             let result = Math.cos(value);
+            string = string.replace(G[z], result);
+          }
+        }
+      }
+    } catch (e) {
+      console.warn(e);
+    }
+    try {
+      if (logOperator.length != 0) {
+        console.log('started-with' + logOperator.length);
+        let G = string.match(logRegex);
+
+        if (G.length != 0) {
+          for (let z = 0; z < G.length; z++) {
+            let item = G[z];
+            console.log('log-item:' + item);
+            let value = item.replace('log(', '').replace(')', '');
+            let result = Math.log10(value);
+            string = string.replace(G[z], result);
+          }
+        }
+      }
+    } catch (e) {
+      console.warn(e);
+    }
+    try {
+      if (lnOperator.length != 0) {
+        console.log('started-with' + lnOperator.length);
+        let G = string.match(lnRegex);
+
+        if (G.length != 0) {
+          for (let z = 0; z < G.length; z++) {
+            let item = G[z];
+            console.log('ln-item:' + item);
+            let value = item.replace('ln(', '').replace(')', '');
+            let result = Math.log(value);
             string = string.replace(G[z], result);
           }
         }
@@ -367,10 +411,10 @@ const MainActivity = () => {
         evaluate(string);
       }
     }
-    try{
-      if(factOperator.length != 0){
+    try {
+      if (factOperator.length != 0) {
         let F = string.match(factRegex);
-  
+
         if (F.length != 0) {
           for (let z = 0; z < F.length; z++) {
             let item = F[z];
@@ -383,7 +427,7 @@ const MainActivity = () => {
           }
         }
       }
-    }catch(e){
+    } catch (e) {
       console.warn(e);
     }
     try {
@@ -433,6 +477,42 @@ const MainActivity = () => {
             console.log('tan-item:' + item);
             let value = item.replace('tan', '');
             let result = Math.tan(value);
+            string = string.replace(G[z], result);
+          }
+        }
+      }
+    } catch (e) {
+      console.warn(e);
+    }
+    try {
+      if (logOperator.length != 0) {
+        console.log('started-with' + logOperator.length);
+        let G = string.match(logRegexWithoutOperator);
+
+        if (G.length != 0) {
+          for (let z = 0; z < G.length; z++) {
+            let item = G[z];
+            console.log('log-item:' + item);
+            let value = item.replace('log', '');
+            let result = Math.log10(value);
+            string = string.replace(G[z], result);
+          }
+        }
+      }
+    } catch (e) {
+      console.warn(e);
+    }
+    try {
+      if (lnOperator.length != 0) {
+        console.log('started-with' + lnOperator.length);
+        let G = string.match(lnRegexWithoutOperator);
+
+        if (G.length != 0) {
+          for (let z = 0; z < G.length; z++) {
+            let item = G[z];
+            console.log('ln-item:' + item);
+            let value = item.replace('ln', '');
+            let result = Math.log(value);
             string = string.replace(G[z], result);
           }
         }
@@ -633,8 +713,6 @@ const MainActivity = () => {
       case 'x²':
         setmainText(mainText + '^2');
         setmainTextIn(mainTextIn + '^2');
-
-
 
         break;
       case 'x³':
