@@ -845,8 +845,8 @@ const MainActivity = () => {
         style={{
           flex: 1,
 
-          shadowColor: '#c264ff',
-
+          shadowColor: 'black',
+          backgroundColor:'#DFAFFE', 
           elevation: 4,
           borderBottomEndRadius: 30,
           borderBottomStartRadius: 30,
@@ -854,11 +854,11 @@ const MainActivity = () => {
         <ScrollView contentContainerStyle={MainActivityStyles.scrollView}>
           <Text
             id="textCalc"
-            style={{fontSize: 70, textAlign: 'right', fontWeight: '500'}}>
+            style={{fontSize: 70,color:'black', textAlign: 'right', fontWeight: '300'}}>
             {mainText}
           </Text>
           {calculated && (
-            <Text id="textCalc" style={{fontSize: 40, textAlign: 'right'}}>
+            <Text id="textCalc" style={{fontSize: 40,color:'black', textAlign: 'right', fontWeight: '500'}}>
               {result}
             </Text>
           )}
