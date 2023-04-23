@@ -14,12 +14,14 @@ const MainActivity = () => {
   let exponent10Operator;
   let exponentOperator;
   let rootOperator;
+  let root3Operator;
   let sinOperator;
   let cosOperator;
   let tanOperator;
   let factOperator;
   let logOperator;
   let lnOperator;
+  
 
   const [mainText, setmainText] = useState('');
   const [result, setResult] = useState('');
@@ -74,6 +76,7 @@ const MainActivity = () => {
     exponent10Operator = occurencesIndexes(string, 'E', false);
     exponentOperator = occurencesIndexes(string, '^', false);
     rootOperator = occurencesIndexes(string, '√', false);
+    root3Operator= occurencesIndexes(string, '∛', false);
     sinOperator = occurencesIndexes(string, 'sin(', true);
     cosOperator = occurencesIndexes(string, 'cos(', true);
     tanOperator = occurencesIndexes(string, 'tan(', true);
@@ -98,6 +101,11 @@ const MainActivity = () => {
     let logRegexWithoutOperator = /log(\-)?\d+(\d*\.?\d+)?/g;
     let lnRegex = /ln\((\-)?\d+(\d*\.?\d+)?\)/g;
     let lnRegexWithoutOperator = /ln(\-)?\d+(\d*\.?\d+)?/g;
+    let rootRegex = /√\d+(\.\d+)?/g;
+    //let rootRegexWithoutOperator = /ln(\-)?\d+(\d*\.?\d+)?/g;
+    let root3Regex = /∛\d+(\.\d+)?/g;
+   // let root3RegexWithoutOperator = /ln(\-)?\d+(\d*\.?\d+)?/g;
+    
     console.log('exponent10Operators' + exponent10Operator);
     if (exponent10Operator.length != 0) {
       let E = string.match(exponent10Regex);
@@ -252,6 +260,42 @@ const MainActivity = () => {
             console.log('ln-item:' + item);
             let value = item.replace('ln(', '').replace(')', '');
             let result = Math.log(value);
+            string = string.replace(G[z], result);
+          }
+        }
+      }
+    } catch (e) {
+      console.warn(e);
+    }
+    try {
+      if (rootOperator.length != 0) {
+        console.log('started-with' + rootOperator.length);
+        let G = string.match(rootRegex);
+
+        if (G.length != 0) {
+          for (let z = 0; z < G.length; z++) {
+            let item = G[z];
+            console.log('root-item:' + item);
+            let value = item.replace('√', '');
+            let result = Math.sqrt(value);
+            string = string.replace(G[z], result);
+          }
+        }
+      }
+    } catch (e) {
+      console.warn(e);
+    }
+    try {
+      if (root3Operator.length != 0) {
+        console.log('started-with' + root3Operator.length);
+        let G = string.match(root3Regex);
+
+        if (G.length != 0) {
+          for (let z = 0; z < G.length; z++) {
+            let item = G[z];
+            console.log('root3-item:' + item);
+            let value = item.replace('∛', '');
+            let result = Math.cbrt(value);
             string = string.replace(G[z], result);
           }
         }
@@ -520,6 +564,7 @@ const MainActivity = () => {
     } catch (e) {
       console.warn(e);
     }
+    
 
     setResult(string);
     showResult = true;
