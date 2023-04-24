@@ -1,5 +1,5 @@
 import {View, Text, ToastAndroid} from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import globalStyles from '../../components/globalStyles';
 import {ScrollView} from 'react-native';
 import MainActivityStyles from './MainActivityStyles';
@@ -21,19 +21,18 @@ const MainActivity = () => {
   let factOperator;
   let logOperator;
   let lnOperator;
-  
-
   const [mainText, setmainText] = useState('');
   const [result, setResult] = useState('');
 
   const [mainTextIn, setmainTextIn] = useState('');
   const [calculated, showResult] = useState(false);
+  useEffect(() => {});
+
   function evaluate(string) {
     if (string.indexOf('(') != -1) {
       let no_of_instances_brac_open = occurencesIndexes(string, '(');
       let no_of_instances_brac_close = occurencesIndexes(string, ')');
-      console.log('closed_bracket:' + no_of_instances_brac_close);
-      console.log('opened_bracket:' + no_of_instances_brac_open);
+
       if (
         no_of_instances_brac_open.length != no_of_instances_brac_close.length
       ) {
@@ -43,13 +42,11 @@ const MainActivity = () => {
           let lastOpenBracIndex =
             no_of_instances_brac_open[no_of_instances_brac_open.length - 1];
           let firstCloseBracIndex = no_of_instances_brac_close[0];
-          console.log('lastOPenBracIndex:' + lastOpenBracIndex);
-          console.log('firstCloseBracIndex:' + firstCloseBracIndex);
+
           let subString = string.substring(
             lastOpenBracIndex + 1,
             firstCloseBracIndex,
           );
-          console.log(subString);
           evaluateSimple(string);
         }
       }
@@ -76,7 +73,7 @@ const MainActivity = () => {
     exponent10Operator = occurencesIndexes(string, 'E', false);
     exponentOperator = occurencesIndexes(string, '^', false);
     rootOperator = occurencesIndexes(string, '√', false);
-    root3Operator= occurencesIndexes(string, '∛', false);
+    root3Operator = occurencesIndexes(string, '∛', false);
     sinOperator = occurencesIndexes(string, 'sin(', true);
     cosOperator = occurencesIndexes(string, 'cos(', true);
     tanOperator = occurencesIndexes(string, 'tan(', true);
@@ -104,12 +101,10 @@ const MainActivity = () => {
     let rootRegex = /√\d+(\.\d+)?/g;
     //let rootRegexWithoutOperator = /ln(\-)?\d+(\d*\.?\d+)?/g;
     let root3Regex = /∛\d+(\.\d+)?/g;
-   // let root3RegexWithoutOperator = /ln(\-)?\d+(\d*\.?\d+)?/g;
-    
-    console.log('exponent10Operators' + exponent10Operator);
+    // let root3RegexWithoutOperator = /ln(\-)?\d+(\d*\.?\d+)?/g;
+
     if (exponent10Operator.length != 0) {
       let E = string.match(exponent10Regex);
-      console.log(E);
 
       if (E.length != 0) {
         for (let z = 0; z < E.length; z++) {
@@ -122,9 +117,8 @@ const MainActivity = () => {
               s = s + '0';
               i++;
             }
-            console.log('sssss:' + s);
+
             string = string.replace(E[z], s);
-            console.log('closed:10power');
           } else {
             let times = item.replace('E-', '');
             let s = '1';
@@ -132,10 +126,9 @@ const MainActivity = () => {
               s = s + '0';
               i++;
             }
-            console.log('sssss:' + s);
+
             let result = 1 / s;
             string = string.replace(E[z], result);
-            console.log('closed:10power');
           }
         }
       }
@@ -146,12 +139,11 @@ const MainActivity = () => {
       if (F.length != 0) {
         for (let z = 0; z < F.length; z++) {
           let item = F[z];
-          console.log('item:' + item);
+
           let replaced = item.replace('^', '**');
           let result = eval(replaced);
-          console.log('sssss:' + result);
+
           string = string.replace(F[z], result);
-          console.log('closed:exponent');
         }
       }
     }
@@ -162,12 +154,9 @@ const MainActivity = () => {
         if (F.length != 0) {
           for (let z = 0; z < F.length; z++) {
             let item = F[z];
-            console.log('item:' + item);
             let value = item.replace('!', '');
             let result = factorial(value);
-            console.log('sssss:' + result);
             string = string.replace(F[z], result);
-            console.log('closed:factorial');
           }
         }
       }
@@ -177,13 +166,11 @@ const MainActivity = () => {
 
     try {
       if (sinOperator.length != 0) {
-        console.log('started-with' + sinOperator.length);
         let G = string.match(sinRegex);
 
         if (G.length != 0) {
           for (let z = 0; z < G.length; z++) {
             let item = G[z];
-            console.log('sin-item:' + item);
             let value = item.replace('sin(', '').replace(')', '');
             let result = Math.sin(value);
             string = string.replace(G[z], result);
@@ -196,13 +183,11 @@ const MainActivity = () => {
 
     try {
       if (tanOperator.length != 0) {
-        console.log('started-with' + tanOperator.length);
         let G = string.match(tanRegex);
 
         if (G.length != 0) {
           for (let z = 0; z < G.length; z++) {
             let item = G[z];
-            console.log('tan-item:' + item);
             let value = item.replace('tan(', '').replace(')', '');
             let result = Math.tan(value);
             string = string.replace(G[z], result);
@@ -215,13 +200,11 @@ const MainActivity = () => {
 
     try {
       if (cosOperator.length != 0) {
-        console.log('started-with' + cosOperator.length);
         let G = string.match(cosRegex);
 
         if (G.length != 0) {
           for (let z = 0; z < G.length; z++) {
             let item = G[z];
-            console.log('cos-item:' + item);
             let value = item.replace('cos(', '').replace(')', '');
             let result = Math.cos(value);
             string = string.replace(G[z], result);
@@ -233,13 +216,11 @@ const MainActivity = () => {
     }
     try {
       if (logOperator.length != 0) {
-        console.log('started-with' + logOperator.length);
         let G = string.match(logRegex);
 
         if (G.length != 0) {
           for (let z = 0; z < G.length; z++) {
             let item = G[z];
-            console.log('log-item:' + item);
             let value = item.replace('log(', '').replace(')', '');
             let result = Math.log10(value);
             string = string.replace(G[z], result);
@@ -251,13 +232,11 @@ const MainActivity = () => {
     }
     try {
       if (lnOperator.length != 0) {
-        console.log('started-with' + lnOperator.length);
         let G = string.match(lnRegex);
 
         if (G.length != 0) {
           for (let z = 0; z < G.length; z++) {
             let item = G[z];
-            console.log('ln-item:' + item);
             let value = item.replace('ln(', '').replace(')', '');
             let result = Math.log(value);
             string = string.replace(G[z], result);
@@ -269,13 +248,11 @@ const MainActivity = () => {
     }
     try {
       if (rootOperator.length != 0) {
-        console.log('started-with' + rootOperator.length);
         let G = string.match(rootRegex);
 
         if (G.length != 0) {
           for (let z = 0; z < G.length; z++) {
             let item = G[z];
-            console.log('root-item:' + item);
             let value = item.replace('√', '');
             let result = Math.sqrt(value);
             string = string.replace(G[z], result);
@@ -287,13 +264,11 @@ const MainActivity = () => {
     }
     try {
       if (root3Operator.length != 0) {
-        console.log('started-with' + root3Operator.length);
         let G = string.match(root3Regex);
 
         if (G.length != 0) {
           for (let z = 0; z < G.length; z++) {
             let item = G[z];
-            console.log('root3-item:' + item);
             let value = item.replace('∛', '');
             let result = Math.cbrt(value);
             string = string.replace(G[z], result);
@@ -305,7 +280,7 @@ const MainActivity = () => {
     }
     if (divideOperator.length != 0) {
       let divisionParts = string.match(divideRegex);
-      console.log('division parts:' + divisionParts);
+
       if (divisionParts != null) {
         for (let i = 0; i < divisionParts.length; i++) {
           let beforeString = divisionParts[i].substring(
@@ -316,12 +291,11 @@ const MainActivity = () => {
             divisionParts[i].indexOf('/') + 1,
             divisionParts[i].length,
           );
-          console.log('beforeString:' + beforeString);
-          console.log('afterString:' + afterString);
+
           let x = parseFloat(beforeString);
           let y = parseFloat(afterString);
           let result = x / y;
-          console.log('result:' + result);
+
           string = string.replace(
             '(' + beforeString + '/' + afterString + ')',
             result.toString(),
@@ -335,15 +309,13 @@ const MainActivity = () => {
           string = string
             .replace(plusMinusRegex, '-')
             .replace(minusMinusRegex, '+');
-          console.log('string:' + string);
-          console.log('closed:division');
         }
       }
     }
 
     if (multiplyOperator.length != 0) {
       let multiplyParts = string.match(multiplyRegex);
-      console.log('multiply parts:' + multiplyParts);
+
       if (multiplyParts != null) {
         for (let i = 0; i < multiplyParts.length; i++) {
           let beforeString = multiplyParts[i].substring(
@@ -354,12 +326,11 @@ const MainActivity = () => {
             multiplyParts[i].indexOf('*') + 1,
             multiplyParts[i].length,
           );
-          console.log('beforeString:' + beforeString);
-          console.log('afterString:' + afterString);
+
           let x = parseFloat(beforeString);
           let y = parseFloat(afterString);
           let result = x * y;
-          console.log('result:' + result);
+
           string = string.replace(
             '(' + beforeString + '*' + afterString + ')',
             result.toString(),
@@ -372,15 +343,12 @@ const MainActivity = () => {
           string = string
             .replace(plusMinusRegex, '-')
             .replace(minusMinusRegex, '+');
-          console.log('string:' + string);
-          console.log('closed:multiplication');
         }
       }
     }
     if (sumOperator.length != 0) {
       let sumParts = string.match(plusRegex);
 
-      console.log('sumpart:' + sumParts);
       if (sumParts != null) {
         for (let i = 0; i < sumParts.length; i++) {
           let beforeString = sumParts[i].substring(
@@ -392,8 +360,7 @@ const MainActivity = () => {
             sumParts[i].lastIndexOf('+') + 1,
             sumParts[i].length,
           );
-          console.log('beforeString:' + beforeString);
-          console.log('afterString:' + afterString);
+
           let x = parseFloat(beforeString);
           let y = parseFloat(afterString);
           let result = x + y;
@@ -409,8 +376,6 @@ const MainActivity = () => {
           string = string
             .replace(plusMinusRegex, '-')
             .replace(minusMinusRegex, '+');
-
-          console.log('result:' + result);
         }
         evaluate(string);
       }
@@ -419,7 +384,6 @@ const MainActivity = () => {
     if (minusOperator.length != 0) {
       let minusParts = string.match(minusRegex);
 
-      console.log('minuspart:' + minusParts);
       if (minusParts != null) {
         for (let i = 0; i < minusParts.length; i++) {
           let beforeString = minusParts[i].substring(
@@ -431,8 +395,7 @@ const MainActivity = () => {
             minusParts[i].lastIndexOf('-') + 1,
             minusParts[i].length,
           );
-          console.log('beforeString:' + beforeString);
-          console.log('afterString:' + afterString);
+
           let x = parseFloat(beforeString);
           let y = parseFloat(afterString);
           let result = x - y;
@@ -449,8 +412,6 @@ const MainActivity = () => {
           string = string
             .replace(plusMinusRegex, '-')
             .replace(minusMinusRegex, '+');
-
-          console.log('result:' + result);
         }
         evaluate(string);
       }
@@ -462,12 +423,9 @@ const MainActivity = () => {
         if (F.length != 0) {
           for (let z = 0; z < F.length; z++) {
             let item = F[z];
-            console.log('item:' + item);
             let value = item.replace('!', '');
             let result = factorial(value);
-            console.log('sssss:' + result);
             string = string.replace(F[z], result);
-            console.log('closed:factorial');
           }
         }
       }
@@ -476,13 +434,11 @@ const MainActivity = () => {
     }
     try {
       if (sinOperator.length != 0) {
-        console.log('started-with' + sinOperator.length);
         let G = string.match(sinRegexWithoutOperator);
 
         if (G.length != 0) {
           for (let z = 0; z < G.length; z++) {
             let item = G[z];
-            console.log('sin-item:' + item);
             let value = item.replace('sin', '');
             let result = Math.sin(value);
             string = string.replace(G[z], result);
@@ -494,13 +450,11 @@ const MainActivity = () => {
     }
     try {
       if (cosOperator.length != 0) {
-        console.log('started-with' + cosOperator.length);
         let G = string.match(cosRegexWithoutOperator);
 
         if (G.length != 0) {
           for (let z = 0; z < G.length; z++) {
             let item = G[z];
-            console.log('cos-item:' + item);
             let value = item.replace('cos', '');
             let result = Math.cos(value);
             string = string.replace(G[z], result);
@@ -512,13 +466,11 @@ const MainActivity = () => {
     }
     try {
       if (tanOperator.length != 0) {
-        console.log('started-with' + tanOperator.length);
         let G = string.match(tanRegexWithoutOperator);
 
         if (G.length != 0) {
           for (let z = 0; z < G.length; z++) {
             let item = G[z];
-            console.log('tan-item:' + item);
             let value = item.replace('tan', '');
             let result = Math.tan(value);
             string = string.replace(G[z], result);
@@ -530,13 +482,11 @@ const MainActivity = () => {
     }
     try {
       if (logOperator.length != 0) {
-        console.log('started-with' + logOperator.length);
         let G = string.match(logRegexWithoutOperator);
 
         if (G.length != 0) {
           for (let z = 0; z < G.length; z++) {
             let item = G[z];
-            console.log('log-item:' + item);
             let value = item.replace('log', '');
             let result = Math.log10(value);
             string = string.replace(G[z], result);
@@ -548,13 +498,12 @@ const MainActivity = () => {
     }
     try {
       if (lnOperator.length != 0) {
-        console.log('started-with' + lnOperator.length);
         let G = string.match(lnRegexWithoutOperator);
 
         if (G.length != 0) {
           for (let z = 0; z < G.length; z++) {
             let item = G[z];
-            console.log('ln-item:' + item);
+
             let value = item.replace('ln', '');
             let result = Math.log(value);
             string = string.replace(G[z], result);
@@ -564,7 +513,6 @@ const MainActivity = () => {
     } catch (e) {
       console.warn(e);
     }
-    
 
     setResult(string);
     showResult = true;
@@ -595,7 +543,6 @@ const MainActivity = () => {
 
       if (finalText.startsWith('*')) {
         fText = fText.substring(1, finalText.length);
-        console.log('starts with *');
       }
       if (finalText.indexOf('%') != -1) {
         let index = finalText.lastIndexOf('%');
@@ -608,8 +555,6 @@ const MainActivity = () => {
         } else {
           fText = fText.replace('%', '/100*');
         }
-
-        console.log('has percent');
       }
       if (
         fText.endsWith('*') ||
@@ -798,8 +743,8 @@ const MainActivity = () => {
 
         break;
       case 'inv':
-        setmainText(mainText + 'inv');
-        setmainTextIn(mainTextIn + 'inv');
+        setmainText(mainText + '1/');
+        setmainTextIn(mainTextIn + '1/');
 
         break;
 
@@ -838,7 +783,6 @@ const MainActivity = () => {
       case 'percent':
         setmainText(mainText + '%');
         setmainTextIn(mainTextIn + '%');
-        console.log(mainTextIn);
 
         break;
 
@@ -891,7 +835,7 @@ const MainActivity = () => {
           flex: 1,
 
           shadowColor: 'black',
-          backgroundColor:'#DFAFFE', 
+          backgroundColor: '#DFAFFE',
           elevation: 4,
           borderBottomEndRadius: 30,
           borderBottomStartRadius: 30,
@@ -899,11 +843,23 @@ const MainActivity = () => {
         <ScrollView contentContainerStyle={MainActivityStyles.scrollView}>
           <Text
             id="textCalc"
-            style={{fontSize: 70,color:'black', textAlign: 'right', fontWeight: '300'}}>
+            style={{
+              fontSize: 70,
+              color: 'black',
+              textAlign: 'right',
+              fontWeight: '300',
+            }}>
             {mainText}
           </Text>
           {calculated && (
-            <Text id="textCalc" style={{fontSize: 40,color:'black', textAlign: 'right', fontWeight: '500'}}>
+            <Text
+              id="textCalc"
+              style={{
+                fontSize: 40,
+                color: 'black',
+                textAlign: 'right',
+                fontWeight: '500',
+              }}>
               {result}
             </Text>
           )}
