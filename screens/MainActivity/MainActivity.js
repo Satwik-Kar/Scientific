@@ -1,5 +1,5 @@
 import {View, Text} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {ScrollView} from 'react-native';
 import MainActivityStyles from './MainActivityStyles';
 import Row from '../../components/Row';
@@ -57,8 +57,8 @@ const MainActivity = () => {
   }
   function evaluateSimple(string) {
     const plusMinusRegex = /\+-/g;
-    const minusMinusRegex = /\--/g;
-    const minusPlusRegex = /\-+/g;
+    const minusMinusRegex = /--/g;
+    const minusPlusRegex = /-+/g;
     const plusPlusRegex = /\++/g;
 
     string = string
@@ -81,9 +81,9 @@ const MainActivity = () => {
     factOperator = occurencesIndexes(string, '!', false);
     logOperator = occurencesIndexes(string, 'log(', true);
     lnOperator = occurencesIndexes(string, 'ln(', true);
-    sinInverseOperator = occurencesIndexes(string, 'sin^-1(', true);
-    cosInverseOperator = occurencesIndexes(string, 'cos^-1(', true);
-    tanInverseOperator = occurencesIndexes(string, 'tan^-1(', true);
+    sinInverseOperator = occurencesIndexes(string, 'sininv(', true);
+    cosInverseOperator = occurencesIndexes(string, 'cosinv(', true);
+    tanInverseOperator = occurencesIndexes(string, 'taninv(', true);
 
     let divideRegex = /(\-)?\d+(\d*\.?\d+)?\/\d+(\d*\.?\d+)?/g;
     let minusRegex = /(\-)?\d+(\d*\.?\d+)?\-\d+(\d*\.?\d+)?/g;
@@ -106,9 +106,9 @@ const MainActivity = () => {
     //let rootRegexWithoutOperator = /ln(\-)?\d+(\d*\.?\d+)?/g;
     let root3Regex = /∛\d+(\.\d+)?/g;
     // let root3RegexWithoutOperator = /ln(\-)?\d+(\d*\.?\d+)?/g;
-    let sinInverseRegex = /sin\^-1\((\-)?\d+(\d*\.?\d+)?\)/g;
-    let cosInverseRegex = /cos\^-1\((\-)?\d+(\d*\.?\d+)?\)/g;
-    let tanInverseRegex = /tan\^-1\((\-)?\d+(\d*\.?\d+)?\)/g;
+    let sinInverseRegex = /sininv\((\-)?\d+(\d*\.?\d+)?\)/g;
+    let cosInverseRegex = /cosinv\((\-)?\d+(\d*\.?\d+)?\)/g;
+    let tanInverseRegex = /taninv\((\-)?\d+(\d*\.?\d+)?\)/g;
 
     if (exponent10Operator.length !== 0) {
       let E = string.match(exponent10Regex);
@@ -198,7 +198,7 @@ const MainActivity = () => {
           console.log('enteredSinInv-found');
           for (let z = 0; z < G.length; z++) {
             let item = G[z];
-            let value = item.replace('sin^-1(', '').replace(')', '');
+            let value = item.replace('sininv(', '').replace(')', '');
             let result = Math.asin(value);
             string = string.replace(G[z], result);
           }
@@ -224,22 +224,22 @@ const MainActivity = () => {
     } catch (e) {
       console.warn(e);
     }
-    // try {
-    //   if (tanInverseOperator.length !== 0) {
-    //     let G = string.match(tanInverseRegex);
-    //
-    //     if (G.length !== 0) {
-    //       for (let z = 0; z < G.length; z++) {
-    //         let item = G[z];
-    //         let value = item.replace('tan^-1(', '').replace(')', '');
-    //         let result = Math.atan(value);
-    //         string = string.replace(G[z], result);
-    //       }
-    //     }
-    //   }
-    // } catch (e) {
-    //   console.warn(e);
-    // }
+    try {
+      if (tanInverseOperator.length !== 0) {
+        let G = string.match(tanInverseRegex);
+
+        if (G.length !== 0) {
+          for (let z = 0; z < G.length; z++) {
+            let item = G[z];
+            let value = item.replace('taninv(', '').replace(')', '');
+            let result = Math.atan(value);
+            string = string.replace(G[z], result);
+          }
+        }
+      }
+    } catch (e) {
+      console.warn(e);
+    }
 
     try {
       if (cosOperator.length !== 0) {
@@ -257,22 +257,22 @@ const MainActivity = () => {
     } catch (e) {
       console.warn(e);
     }
-    // try {
-    //   if (cosInverseOperator.length !== 0) {
-    //     let G = string.match(cosInverseRegex);
-    //
-    //     if (G.length !== 0) {
-    //       for (let z = 0; z < G.length; z++) {
-    //         let item = G[z];
-    //         let value = item.replace('cos^-1(', '').replace(')', '');
-    //         let result = Math.acos(value);
-    //         string = string.replace(G[z], result);
-    //       }
-    //     }
-    //   }
-    // } catch (e) {
-    //   console.warn(e);
-    // }
+    try {
+      if (cosInverseOperator.length !== 0) {
+        let G = string.match(cosInverseRegex);
+
+        if (G.length !== 0) {
+          for (let z = 0; z < G.length; z++) {
+            let item = G[z];
+            let value = item.replace('cosinv(', '').replace(')', '');
+            let result = Math.acos(value);
+            string = string.replace(G[z], result);
+          }
+        }
+      }
+    } catch (e) {
+      console.warn(e);
+    }
     try {
       if (logOperator.length !== 0) {
         let G = string.match(logRegex);
@@ -809,22 +809,22 @@ const MainActivity = () => {
 
       case 'sininv':
         {
-          setmainText(mainText + 'sin^-1(');
-          setmainTextIn(mainTextIn + 'sin^-1(');
+          setmainText(mainText + 'sininv(');
+          setmainTextIn(mainTextIn + 'sininv(');
         }
 
         break;
       case 'cosinv':
         {
-          setmainText(mainText + 'cos^-1(');
-          setmainTextIn(mainTextIn + 'cos^-1(');
+          setmainText(mainText + 'cosinv(');
+          setmainTextIn(mainTextIn + 'cosinv(');
         }
 
         break;
       case 'taninv':
         {
-          setmainText(mainText + 'tan^-1(');
-          setmainTextIn(mainTextIn + 'tan^-1(');
+          setmainText(mainText + 'taninv(');
+          setmainTextIn(mainTextIn + 'taninv(');
         }
 
         break;
