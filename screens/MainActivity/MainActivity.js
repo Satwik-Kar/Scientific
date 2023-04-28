@@ -56,7 +56,7 @@ const MainActivity = () => {
     let multiplyRegex = /(\-)?\d+(\d*\.?\d+)?\*\d+(\d*\.?\d+)?/g;
     let plusRegex = /(\-)?\d+(\d*\.?\d+)?\+\d+(\d*\.?\d+)?/g;
     let exponentRegex = /\d+(\d*\.?\d+)?\^\d+(\d*\.?\d+)?/g;
-    let exponent10Regex = /E\d+(\d*\.?\d+)?/g;
+    let exponent10Regex = /E(-)?\d+(\d*\.?\d+)?/g;
     let factRegex = /\d+(.\d)?\!/g;
     let sinRegex = /sin\((\-)?\d+(\d*\.?\d+)?\)/g;
     let sinRegexWithoutOperator = /sin(\-)?\d+(\d*\.?\d+)?/g;
