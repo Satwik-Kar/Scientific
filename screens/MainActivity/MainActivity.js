@@ -1,6 +1,5 @@
-import {View, Text, ToastAndroid} from 'react-native';
+import {View, Text} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import globalStyles from '../../components/globalStyles';
 import {ScrollView} from 'react-native';
 import MainActivityStyles from './MainActivityStyles';
 import Row from '../../components/Row';
@@ -21,20 +20,22 @@ const MainActivity = () => {
   let factOperator;
   let logOperator;
   let lnOperator;
+  let sinInverseOperator;
+  let cosInverseOperator;
+  let tanInverseOperator;
   const [mainText, setmainText] = useState('');
   const [result, setResult] = useState('');
 
   const [mainTextIn, setmainTextIn] = useState('');
   const [calculated, showResult] = useState(false);
-  useEffect(() => {});
 
   function evaluate(string) {
-    if (string.indexOf('(') != -1) {
+    if (string.indexOf('(') !== -1) {
       let no_of_instances_brac_open = occurencesIndexes(string, '(');
       let no_of_instances_brac_close = occurencesIndexes(string, ')');
 
       if (
-        no_of_instances_brac_open.length != no_of_instances_brac_close.length
+        no_of_instances_brac_open.length !== no_of_instances_brac_close.length
       ) {
         throw 'BRACKET_FORMAT_ERROR';
       } else {
@@ -80,6 +81,9 @@ const MainActivity = () => {
     factOperator = occurencesIndexes(string, '!', false);
     logOperator = occurencesIndexes(string, 'log(', true);
     lnOperator = occurencesIndexes(string, 'ln(', true);
+    sinInverseOperator = occurencesIndexes(string, 'sin^-1(', true);
+    cosInverseOperator = occurencesIndexes(string, 'cos^-1(', true);
+    tanInverseOperator = occurencesIndexes(string, 'tan^-1(', true);
 
     let divideRegex = /(\-)?\d+(\d*\.?\d+)?\/\d+(\d*\.?\d+)?/g;
     let minusRegex = /(\-)?\d+(\d*\.?\d+)?\-\d+(\d*\.?\d+)?/g;
@@ -102,15 +106,18 @@ const MainActivity = () => {
     //let rootRegexWithoutOperator = /ln(\-)?\d+(\d*\.?\d+)?/g;
     let root3Regex = /∛\d+(\.\d+)?/g;
     // let root3RegexWithoutOperator = /ln(\-)?\d+(\d*\.?\d+)?/g;
+    let sinInverseRegex = /sin\^-1\((\-)?\d+(\d*\.?\d+)?\)/g;
+    let cosInverseRegex = /cos\^-1\((\-)?\d+(\d*\.?\d+)?\)/g;
+    let tanInverseRegex = /tan\^-1\((\-)?\d+(\d*\.?\d+)?\)/g;
 
-    if (exponent10Operator.length != 0) {
+    if (exponent10Operator.length !== 0) {
       let E = string.match(exponent10Regex);
 
-      if (E.length != 0) {
+      if (E.length !== 0) {
         for (let z = 0; z < E.length; z++) {
           let i = 1;
           let item = E[z];
-          if (item.indexOf('-') == -1) {
+          if (item.indexOf('-') === -1) {
             let times = item.replace('E', '');
             let s = '1';
             while (i <= times) {
@@ -133,14 +140,15 @@ const MainActivity = () => {
         }
       }
     }
-    if (exponentOperator.length != 0) {
+    if (exponentOperator.length !== 0) {
       let F = string.match(exponentRegex);
 
-      if (F.length != 0) {
+      if (F.length !== 0) {
         for (let z = 0; z < F.length; z++) {
           let item = F[z];
 
           let replaced = item.replace('^', '**');
+          // eslint-disable-next-line no-eval
           let result = eval(replaced);
 
           string = string.replace(F[z], result);
@@ -148,10 +156,10 @@ const MainActivity = () => {
       }
     }
     try {
-      if (factOperator.length != 0) {
+      if (factOperator.length !== 0) {
         let F = string.match(factRegex);
 
-        if (F.length != 0) {
+        if (F.length !== 0) {
           for (let z = 0; z < F.length; z++) {
             let item = F[z];
             let value = item.replace('!', '');
@@ -165,10 +173,10 @@ const MainActivity = () => {
     }
 
     try {
-      if (sinOperator.length != 0) {
+      if (sinOperator.length !== 0) {
         let G = string.match(sinRegex);
 
-        if (G.length != 0) {
+        if (G.length !== 0) {
           for (let z = 0; z < G.length; z++) {
             let item = G[z];
             let value = item.replace('sin(', '').replace(')', '');
@@ -182,10 +190,29 @@ const MainActivity = () => {
     }
 
     try {
-      if (tanOperator.length != 0) {
+      if (sinInverseOperator.length !== 0) {
+        console.log('enteredSinInv');
+        let G = string.match(sinInverseRegex);
+
+        if (G.length !== 0) {
+          console.log('enteredSinInv-found');
+          for (let z = 0; z < G.length; z++) {
+            let item = G[z];
+            let value = item.replace('sin^-1(', '').replace(')', '');
+            let result = Math.asin(value);
+            string = string.replace(G[z], result);
+          }
+        }
+      }
+    } catch (e) {
+      console.warn(e);
+    }
+
+    try {
+      if (tanOperator.length !== 0) {
         let G = string.match(tanRegex);
 
-        if (G.length != 0) {
+        if (G.length !== 0) {
           for (let z = 0; z < G.length; z++) {
             let item = G[z];
             let value = item.replace('tan(', '').replace(')', '');
@@ -197,12 +224,28 @@ const MainActivity = () => {
     } catch (e) {
       console.warn(e);
     }
+    // try {
+    //   if (tanInverseOperator.length !== 0) {
+    //     let G = string.match(tanInverseRegex);
+    //
+    //     if (G.length !== 0) {
+    //       for (let z = 0; z < G.length; z++) {
+    //         let item = G[z];
+    //         let value = item.replace('tan^-1(', '').replace(')', '');
+    //         let result = Math.atan(value);
+    //         string = string.replace(G[z], result);
+    //       }
+    //     }
+    //   }
+    // } catch (e) {
+    //   console.warn(e);
+    // }
 
     try {
-      if (cosOperator.length != 0) {
+      if (cosOperator.length !== 0) {
         let G = string.match(cosRegex);
 
-        if (G.length != 0) {
+        if (G.length !== 0) {
           for (let z = 0; z < G.length; z++) {
             let item = G[z];
             let value = item.replace('cos(', '').replace(')', '');
@@ -214,11 +257,27 @@ const MainActivity = () => {
     } catch (e) {
       console.warn(e);
     }
+    // try {
+    //   if (cosInverseOperator.length !== 0) {
+    //     let G = string.match(cosInverseRegex);
+    //
+    //     if (G.length !== 0) {
+    //       for (let z = 0; z < G.length; z++) {
+    //         let item = G[z];
+    //         let value = item.replace('cos^-1(', '').replace(')', '');
+    //         let result = Math.acos(value);
+    //         string = string.replace(G[z], result);
+    //       }
+    //     }
+    //   }
+    // } catch (e) {
+    //   console.warn(e);
+    // }
     try {
-      if (logOperator.length != 0) {
+      if (logOperator.length !== 0) {
         let G = string.match(logRegex);
 
-        if (G.length != 0) {
+        if (G.length !== 0) {
           for (let z = 0; z < G.length; z++) {
             let item = G[z];
             let value = item.replace('log(', '').replace(')', '');
@@ -231,10 +290,10 @@ const MainActivity = () => {
       console.warn(e);
     }
     try {
-      if (lnOperator.length != 0) {
+      if (lnOperator.length !== 0) {
         let G = string.match(lnRegex);
 
-        if (G.length != 0) {
+        if (G.length !== 0) {
           for (let z = 0; z < G.length; z++) {
             let item = G[z];
             let value = item.replace('ln(', '').replace(')', '');
@@ -247,10 +306,10 @@ const MainActivity = () => {
       console.warn(e);
     }
     try {
-      if (rootOperator.length != 0) {
+      if (rootOperator.length !== 0) {
         let G = string.match(rootRegex);
 
-        if (G.length != 0) {
+        if (G.length !== 0) {
           for (let z = 0; z < G.length; z++) {
             let item = G[z];
             let value = item.replace('√', '');
@@ -263,10 +322,10 @@ const MainActivity = () => {
       console.warn(e);
     }
     try {
-      if (root3Operator.length != 0) {
+      if (root3Operator.length !== 0) {
         let G = string.match(root3Regex);
 
-        if (G.length != 0) {
+        if (G.length !== 0) {
           for (let z = 0; z < G.length; z++) {
             let item = G[z];
             let value = item.replace('∛', '');
@@ -278,10 +337,10 @@ const MainActivity = () => {
     } catch (e) {
       console.warn(e);
     }
-    if (divideOperator.length != 0) {
+    if (divideOperator.length !== 0) {
       let divisionParts = string.match(divideRegex);
 
-      if (divisionParts != null) {
+      if (divisionParts !== null) {
         for (let i = 0; i < divisionParts.length; i++) {
           let beforeString = divisionParts[i].substring(
             0,
@@ -313,7 +372,7 @@ const MainActivity = () => {
       }
     }
 
-    if (multiplyOperator.length != 0) {
+    if (multiplyOperator.length !== 0) {
       let multiplyParts = string.match(multiplyRegex);
 
       if (multiplyParts != null) {
@@ -346,10 +405,10 @@ const MainActivity = () => {
         }
       }
     }
-    if (sumOperator.length != 0) {
+    if (sumOperator.length !== 0) {
       let sumParts = string.match(plusRegex);
 
-      if (sumParts != null) {
+      if (sumParts !== null) {
         for (let i = 0; i < sumParts.length; i++) {
           let beforeString = sumParts[i].substring(
             0,
@@ -381,7 +440,7 @@ const MainActivity = () => {
       }
     }
 
-    if (minusOperator.length != 0) {
+    if (minusOperator.length !== 0) {
       let minusParts = string.match(minusRegex);
 
       if (minusParts != null) {
@@ -417,10 +476,10 @@ const MainActivity = () => {
       }
     }
     try {
-      if (factOperator.length != 0) {
+      if (factOperator.length !== 0) {
         let F = string.match(factRegex);
 
-        if (F.length != 0) {
+        if (F.length !== 0) {
           for (let z = 0; z < F.length; z++) {
             let item = F[z];
             let value = item.replace('!', '');
@@ -433,10 +492,10 @@ const MainActivity = () => {
       console.warn(e);
     }
     try {
-      if (sinOperator.length != 0) {
+      if (sinOperator.length !== 0) {
         let G = string.match(sinRegexWithoutOperator);
 
-        if (G.length != 0) {
+        if (G.length !== 0) {
           for (let z = 0; z < G.length; z++) {
             let item = G[z];
             let value = item.replace('sin', '');
@@ -449,10 +508,10 @@ const MainActivity = () => {
       console.warn(e);
     }
     try {
-      if (cosOperator.length != 0) {
+      if (cosOperator.length !== 0) {
         let G = string.match(cosRegexWithoutOperator);
 
-        if (G.length != 0) {
+        if (G.length !== 0) {
           for (let z = 0; z < G.length; z++) {
             let item = G[z];
             let value = item.replace('cos', '');
@@ -465,10 +524,10 @@ const MainActivity = () => {
       console.warn(e);
     }
     try {
-      if (tanOperator.length != 0) {
+      if (tanOperator.length !== 0) {
         let G = string.match(tanRegexWithoutOperator);
 
-        if (G.length != 0) {
+        if (G.length !== 0) {
           for (let z = 0; z < G.length; z++) {
             let item = G[z];
             let value = item.replace('tan', '');
@@ -481,10 +540,10 @@ const MainActivity = () => {
       console.warn(e);
     }
     try {
-      if (logOperator.length != 0) {
+      if (logOperator.length !== 0) {
         let G = string.match(logRegexWithoutOperator);
 
-        if (G.length != 0) {
+        if (G.length !== 0) {
           for (let z = 0; z < G.length; z++) {
             let item = G[z];
             let value = item.replace('log', '');
@@ -497,10 +556,10 @@ const MainActivity = () => {
       console.warn(e);
     }
     try {
-      if (lnOperator.length != 0) {
+      if (lnOperator.length !== 0) {
         let G = string.match(lnRegexWithoutOperator);
 
-        if (G.length != 0) {
+        if (G.length !== 0) {
           for (let z = 0; z < G.length; z++) {
             let item = G[z];
 
@@ -515,7 +574,7 @@ const MainActivity = () => {
     }
 
     setResult(string);
-    showResult = true;
+    showResult(true);
   }
   function clearAll() {
     setmainText('');
@@ -544,12 +603,12 @@ const MainActivity = () => {
       if (finalText.startsWith('*')) {
         fText = fText.substring(1, finalText.length);
       }
-      if (finalText.indexOf('%') != -1) {
+      if (finalText.indexOf('%') !== -1) {
         let index = finalText.lastIndexOf('%');
         if (
-          finalText.charAt(index + 1) == '+' ||
-          finalText.charAt(index + 1) == '-' ||
-          finalText.charAt(index + 1) == '/'
+          finalText.charAt(index + 1) === '+' ||
+          finalText.charAt(index + 1) === '-' ||
+          finalText.charAt(index + 1) === '/'
         ) {
           fText = fText.replace('%', '/100');
         } else {
@@ -750,22 +809,22 @@ const MainActivity = () => {
 
       case 'sininv':
         {
-          setmainText(mainText + 'sin^-1');
-          setmainTextIn(mainTextIn + 'sin^-1');
+          setmainText(mainText + 'sin^-1(');
+          setmainTextIn(mainTextIn + 'sin^-1(');
         }
 
         break;
       case 'cosinv':
         {
-          setmainText(mainText + 'cos^-1');
-          setmainTextIn(mainTextIn + 'cos^-1');
+          setmainText(mainText + 'cos^-1(');
+          setmainTextIn(mainTextIn + 'cos^-1(');
         }
 
         break;
       case 'taninv':
         {
-          setmainText(mainText + 'tan^-1');
-          setmainTextIn(mainTextIn + 'tan^-1');
+          setmainText(mainText + 'tan^-1(');
+          setmainTextIn(mainTextIn + 'tan^-1(');
         }
 
         break;
@@ -801,7 +860,7 @@ const MainActivity = () => {
   }
   function factorial(number) {
     let fact = 1;
-    if (number == 0) {
+    if (number === 0) {
       return fact;
     }
     for (let i = 1; i <= number; i++) {
@@ -811,9 +870,9 @@ const MainActivity = () => {
     return fact;
   }
   function occurencesIndexes(string, char, simple) {
-    if (simple == true) {
+    if (simple === true) {
       let x = string;
-      if (x.indexOf(char) != -1) {
+      if (x.indexOf(char) !== -1) {
         return 1;
       } else {
         return 0;
@@ -821,7 +880,7 @@ const MainActivity = () => {
     } else {
       let arr = [];
       for (let i = 0; i < string.length; i++) {
-        if (string.charAt(i) == char) {
+        if (string.charAt(i) === char) {
           arr.push(i);
         }
       }
