@@ -31,60 +31,26 @@ const MainActivity = () => {
 
   function evaluate(string) {
     if (string.indexOf('(') !== -1) {
-      let no_of_instances_brac_open = occurencesIndexes(string, '(');
-      let no_of_instances_brac_close = occurencesIndexes(string, ')');
+      let no_of_instances_brac_open = occurencesIndexes(string, '(', false);
+      let no_of_instances_brac_close = occurencesIndexes(string, ')', false);
 
       if (
         no_of_instances_brac_open.length !== no_of_instances_brac_close.length
       ) {
         throw 'BRACKET_FORMAT_ERROR';
       } else {
-        for (let i = 0; i < no_of_instances_brac_open.length; i++) {
-          let lastOpenBracIndex =
-            no_of_instances_brac_open[no_of_instances_brac_open.length - 1];
-          let firstCloseBracIndex = no_of_instances_brac_close[0];
-
-          let subString = string.substring(
-            lastOpenBracIndex + 1,
-            firstCloseBracIndex,
-          );
-          evaluateSimple(string);
-        }
+        evaluateSimple(string);
       }
     } else {
       evaluateSimple(string);
     }
   }
   function evaluateSimple(string) {
+    let resultRegex = /^-?\d+(\.\d+)?([eE][-+]?\d+)?$/g;
     const plusMinusRegex = /\+-/g;
     const minusMinusRegex = /--/g;
     const minusPlusRegex = /-+/g;
     const plusPlusRegex = /\++/g;
-
-    string = string
-      .replace(plusMinusRegex, '-')
-      .replace(minusMinusRegex, '+')
-      .replace(minusPlusRegex, '-')
-      .replace(plusPlusRegex, '+');
-
-    sumOperator = occurencesIndexes(string, '+', false);
-    minusOperator = occurencesIndexes(string, '-', false);
-    multiplyOperator = occurencesIndexes(string, '*', false);
-    divideOperator = occurencesIndexes(string, '/', false);
-    exponent10Operator = occurencesIndexes(string, 'E', false);
-    exponentOperator = occurencesIndexes(string, '^', false);
-    rootOperator = occurencesIndexes(string, '√', false);
-    root3Operator = occurencesIndexes(string, '∛', false);
-    sinOperator = occurencesIndexes(string, 'sin(', true);
-    cosOperator = occurencesIndexes(string, 'cos(', true);
-    tanOperator = occurencesIndexes(string, 'tan(', true);
-    factOperator = occurencesIndexes(string, '!', false);
-    logOperator = occurencesIndexes(string, 'log(', true);
-    lnOperator = occurencesIndexes(string, 'ln(', true);
-    sinInverseOperator = occurencesIndexes(string, 'sininv(', true);
-    cosInverseOperator = occurencesIndexes(string, 'cosinv(', true);
-    tanInverseOperator = occurencesIndexes(string, 'taninv(', true);
-
     let divideRegex = /(\-)?\d+(\d*\.?\d+)?\/\d+(\d*\.?\d+)?/g;
     let minusRegex = /(\-)?\d+(\d*\.?\d+)?\-\d+(\d*\.?\d+)?/g;
     let multiplyRegex = /(\-)?\d+(\d*\.?\d+)?\*\d+(\d*\.?\d+)?/g;
@@ -110,471 +76,495 @@ const MainActivity = () => {
     let cosInverseRegex = /cosinv\((\-)?\d+(\d*\.?\d+)?\)/g;
     let tanInverseRegex = /taninv\((\-)?\d+(\d*\.?\d+)?\)/g;
 
-    if (exponent10Operator.length !== 0) {
-      let E = string.match(exponent10Regex);
+    while (resultRegex.test(string) === false) {
+      string = string
+        .replace(plusMinusRegex, '-')
+        .replace(minusMinusRegex, '+')
+        .replace(minusPlusRegex, '-')
+        .replace(plusPlusRegex, '+');
 
-      if (E.length !== 0) {
-        for (let z = 0; z < E.length; z++) {
-          let i = 1;
-          let item = E[z];
-          if (item.indexOf('-') === -1) {
-            let times = item.replace('E', '');
-            let s = '1';
-            while (i <= times) {
-              s = s + '0';
-              i++;
+      sumOperator = occurencesIndexes(string, '+', false);
+      minusOperator = occurencesIndexes(string, '-', false);
+      multiplyOperator = occurencesIndexes(string, '*', false);
+      divideOperator = occurencesIndexes(string, '/', false);
+      exponent10Operator = occurencesIndexes(string, 'E', false);
+      exponentOperator = occurencesIndexes(string, '^', false);
+      rootOperator = occurencesIndexes(string, '√', false);
+      root3Operator = occurencesIndexes(string, '∛', false);
+      sinOperator = occurencesIndexes(string, 'sin(', true);
+      cosOperator = occurencesIndexes(string, 'cos(', true);
+      tanOperator = occurencesIndexes(string, 'tan(', true);
+      factOperator = occurencesIndexes(string, '!', false);
+      logOperator = occurencesIndexes(string, 'log(', true);
+      lnOperator = occurencesIndexes(string, 'ln(', true);
+      sinInverseOperator = occurencesIndexes(string, 'sininv(', true);
+      cosInverseOperator = occurencesIndexes(string, 'cosinv(', true);
+      tanInverseOperator = occurencesIndexes(string, 'taninv(', true);
+
+      if (exponent10Operator.length !== 0) {
+        let E = string.match(exponent10Regex);
+
+        if (E.length !== 0) {
+          for (let z = 0; z < E.length; z++) {
+            let i = 1;
+            let item = E[z];
+            if (item.indexOf('-') === -1) {
+              let times = item.replace('E', '');
+              let s = '1';
+              while (i <= times) {
+                s = s + '0';
+                i++;
+              }
+
+              string = string.replace(E[z], s);
+            } else {
+              let times = item.replace('E-', '');
+              let s = '1';
+              while (i <= times) {
+                s = s + '0';
+                i++;
+              }
+
+              let result = 1 / s;
+              string = string.replace(E[z], result);
             }
-
-            string = string.replace(E[z], s);
-          } else {
-            let times = item.replace('E-', '');
-            let s = '1';
-            while (i <= times) {
-              s = s + '0';
-              i++;
-            }
-
-            let result = 1 / s;
-            string = string.replace(E[z], result);
           }
         }
       }
-    }
-    if (exponentOperator.length !== 0) {
-      let F = string.match(exponentRegex);
-
-      if (F.length !== 0) {
-        for (let z = 0; z < F.length; z++) {
-          let item = F[z];
-
-          let replaced = item.replace('^', '**');
-          // eslint-disable-next-line no-eval
-          let result = eval(replaced);
-
-          string = string.replace(F[z], result);
-        }
-      }
-    }
-    try {
-      if (factOperator.length !== 0) {
-        let F = string.match(factRegex);
+      if (exponentOperator.length !== 0) {
+        let F = string.match(exponentRegex);
 
         if (F.length !== 0) {
           for (let z = 0; z < F.length; z++) {
             let item = F[z];
-            let value = item.replace('!', '');
-            let result = factorial(value);
+
+            let replaced = item.replace('^', '**');
+            // eslint-disable-next-line no-eval
+            let result = eval(replaced);
+
             string = string.replace(F[z], result);
           }
         }
       }
-    } catch (e) {
-      console.warn(e);
-    }
+      try {
+        if (factOperator.length !== 0) {
+          let F = string.match(factRegex);
 
-    try {
-      if (sinOperator.length !== 0) {
-        let G = string.match(sinRegex);
+          if (F.length !== 0) {
+            for (let z = 0; z < F.length; z++) {
+              let item = F[z];
+              let value = item.replace('!', '');
+              let result = factorial(value);
+              string = string.replace(F[z], result);
+            }
+          }
+        }
+      } catch (e) {
+        console.warn(e);
+      }
 
-        if (G.length !== 0) {
-          for (let z = 0; z < G.length; z++) {
-            let item = G[z];
-            let value = item.replace('sin(', '').replace(')', '');
-            let result = Math.sin(value);
-            string = string.replace(G[z], result);
+      try {
+        if (sinOperator.length !== 0) {
+          let G = string.match(sinRegex);
+
+          if (G.length !== 0) {
+            for (let z = 0; z < G.length; z++) {
+              let item = G[z];
+              let value = item.replace('sin(', '').replace(')', '');
+              let result = Math.sin(value);
+              string = string.replace(G[z], result);
+            }
+          }
+        }
+      } catch (e) {
+        console.warn(e);
+      }
+
+      try {
+        if (sinInverseOperator.length !== 0) {
+          console.log('enteredSinInv');
+          let G = string.match(sinInverseRegex);
+
+          if (G.length !== 0) {
+            console.log('enteredSinInv-found');
+            for (let z = 0; z < G.length; z++) {
+              let item = G[z];
+              let value = item.replace('sininv(', '').replace(')', '');
+              let result = Math.asin(value);
+              string = string.replace(G[z], result);
+            }
+          }
+        }
+      } catch (e) {
+        console.warn(e);
+      }
+
+      try {
+        if (tanOperator.length !== 0) {
+          let G = string.match(tanRegex);
+
+          if (G.length !== 0) {
+            for (let z = 0; z < G.length; z++) {
+              let item = G[z];
+              let value = item.replace('tan(', '').replace(')', '');
+              let result = Math.tan(value);
+              string = string.replace(G[z], result);
+            }
+          }
+        }
+      } catch (e) {
+        console.warn(e);
+      }
+      try {
+        if (tanInverseOperator.length !== 0) {
+          let G = string.match(tanInverseRegex);
+
+          if (G.length !== 0) {
+            for (let z = 0; z < G.length; z++) {
+              let item = G[z];
+              let value = item.replace('taninv(', '').replace(')', '');
+              let result = Math.atan(value);
+              string = string.replace(G[z], result);
+            }
+          }
+        }
+      } catch (e) {
+        console.warn(e);
+      }
+
+      try {
+        if (cosOperator.length !== 0) {
+          let G = string.match(cosRegex);
+
+          if (G.length !== 0) {
+            for (let z = 0; z < G.length; z++) {
+              let item = G[z];
+              let value = item.replace('cos(', '').replace(')', '');
+              let result = Math.cos(value);
+              string = string.replace(G[z], result);
+            }
+          }
+        }
+      } catch (e) {
+        console.warn(e);
+      }
+      try {
+        if (cosInverseOperator.length !== 0) {
+          let G = string.match(cosInverseRegex);
+
+          if (G.length !== 0) {
+            for (let z = 0; z < G.length; z++) {
+              let item = G[z];
+              let value = item.replace('cosinv(', '').replace(')', '');
+              let result = Math.acos(value);
+              string = string.replace(G[z], result);
+            }
+          }
+        }
+      } catch (e) {
+        console.warn(e);
+      }
+      try {
+        if (logOperator.length !== 0) {
+          let G = string.match(logRegex);
+
+          if (G.length !== 0) {
+            for (let z = 0; z < G.length; z++) {
+              let item = G[z];
+              let value = item.replace('log(', '').replace(')', '');
+              let result = Math.log10(value);
+              string = string.replace(G[z], result);
+            }
+          }
+        }
+      } catch (e) {
+        console.warn(e);
+      }
+      try {
+        if (lnOperator.length !== 0) {
+          let G = string.match(lnRegex);
+
+          if (G.length !== 0) {
+            for (let z = 0; z < G.length; z++) {
+              let item = G[z];
+              let value = item.replace('ln(', '').replace(')', '');
+              let result = Math.log(value);
+              string = string.replace(G[z], result);
+            }
+          }
+        }
+      } catch (e) {
+        console.warn(e);
+      }
+      try {
+        if (rootOperator.length !== 0) {
+          let G = string.match(rootRegex);
+
+          if (G.length !== 0) {
+            for (let z = 0; z < G.length; z++) {
+              let item = G[z];
+              let value = item.replace('√', '');
+              let result = Math.sqrt(value);
+              string = string.replace(G[z], result);
+            }
+          }
+        }
+      } catch (e) {
+        console.warn(e);
+      }
+      try {
+        if (root3Operator.length !== 0) {
+          let G = string.match(root3Regex);
+
+          if (G.length !== 0) {
+            for (let z = 0; z < G.length; z++) {
+              let item = G[z];
+              let value = item.replace('∛', '');
+              let result = Math.cbrt(value);
+              string = string.replace(G[z], result);
+            }
+          }
+        }
+      } catch (e) {
+        console.warn(e);
+      }
+      if (divideOperator.length !== 0) {
+        let divisionParts = string.match(divideRegex);
+
+        if (divisionParts !== null) {
+          for (let i = 0; i < divisionParts.length; i++) {
+            let beforeString = divisionParts[i].substring(
+              0,
+              divisionParts[i].indexOf('/'),
+            );
+            let afterString = divisionParts[i].substring(
+              divisionParts[i].indexOf('/') + 1,
+              divisionParts[i].length,
+            );
+
+            let x = parseFloat(beforeString);
+            let y = parseFloat(afterString);
+            let result = x / y;
+
+            string = string.replace(
+              '(' + beforeString + '/' + afterString + ')',
+              result.toString(),
+            );
+
+            string = string.replace(
+              beforeString + '/' + afterString,
+              result.toString(),
+            );
+
+            string = string
+              .replace(plusMinusRegex, '-')
+              .replace(minusMinusRegex, '+');
           }
         }
       }
-    } catch (e) {
-      console.warn(e);
-    }
 
-    try {
-      if (sinInverseOperator.length !== 0) {
-        console.log('enteredSinInv');
-        let G = string.match(sinInverseRegex);
+      if (multiplyOperator.length !== 0) {
+        let multiplyParts = string.match(multiplyRegex);
 
-        if (G.length !== 0) {
-          console.log('enteredSinInv-found');
-          for (let z = 0; z < G.length; z++) {
-            let item = G[z];
-            let value = item.replace('sininv(', '').replace(')', '');
-            let result = Math.asin(value);
-            string = string.replace(G[z], result);
+        if (multiplyParts != null) {
+          for (let i = 0; i < multiplyParts.length; i++) {
+            let beforeString = multiplyParts[i].substring(
+              0,
+              multiplyParts[i].indexOf('*'),
+            );
+            let afterString = multiplyParts[i].substring(
+              multiplyParts[i].indexOf('*') + 1,
+              multiplyParts[i].length,
+            );
+
+            let x = parseFloat(beforeString);
+            let y = parseFloat(afterString);
+            let result = x * y;
+
+            string = string.replace(
+              '(' + beforeString + '*' + afterString + ')',
+              result.toString(),
+            );
+            string = string.replace(
+              beforeString + '*' + afterString,
+              result.toString(),
+            );
+
+            string = string
+              .replace(plusMinusRegex, '-')
+              .replace(minusMinusRegex, '+');
           }
         }
       }
-    } catch (e) {
-      console.warn(e);
-    }
+      if (sumOperator.length !== 0) {
+        let sumParts = string.match(plusRegex);
 
-    try {
-      if (tanOperator.length !== 0) {
-        let G = string.match(tanRegex);
+        if (sumParts !== null) {
+          for (let i = 0; i < sumParts.length; i++) {
+            let beforeString = sumParts[i].substring(
+              0,
+              sumParts[i].lastIndexOf('+'),
+            );
 
-        if (G.length !== 0) {
-          for (let z = 0; z < G.length; z++) {
-            let item = G[z];
-            let value = item.replace('tan(', '').replace(')', '');
-            let result = Math.tan(value);
-            string = string.replace(G[z], result);
+            let afterString = sumParts[i].substring(
+              sumParts[i].lastIndexOf('+') + 1,
+              sumParts[i].length,
+            );
+
+            let x = parseFloat(beforeString);
+            let y = parseFloat(afterString);
+            let result = x + y;
+            string = string.replace(
+              '(' + beforeString + '+' + afterString + ')',
+              result.toString(),
+            );
+            string = string.replace(
+              beforeString + '+' + afterString,
+              result.toString(),
+            );
+
+            string = string
+              .replace(plusMinusRegex, '-')
+              .replace(minusMinusRegex, '+');
           }
         }
       }
-    } catch (e) {
-      console.warn(e);
-    }
-    try {
-      if (tanInverseOperator.length !== 0) {
-        let G = string.match(tanInverseRegex);
 
-        if (G.length !== 0) {
-          for (let z = 0; z < G.length; z++) {
-            let item = G[z];
-            let value = item.replace('taninv(', '').replace(')', '');
-            let result = Math.atan(value);
-            string = string.replace(G[z], result);
+      if (minusOperator.length !== 0) {
+        let minusParts = string.match(minusRegex);
+
+        if (minusParts != null) {
+          for (let i = 0; i < minusParts.length; i++) {
+            let beforeString = minusParts[i].substring(
+              0,
+              minusParts[i].lastIndexOf('-'),
+            );
+
+            let afterString = minusParts[i].substring(
+              minusParts[i].lastIndexOf('-') + 1,
+              minusParts[i].length,
+            );
+
+            let x = parseFloat(beforeString);
+            let y = parseFloat(afterString);
+            let result = x - y;
+            string = string.replace(
+              '(' + beforeString + '-' + afterString + ')',
+              result.toString(),
+            );
+
+            string = string.replace(
+              beforeString + '-' + afterString,
+              result.toString(),
+            );
+
+            string = string
+              .replace(plusMinusRegex, '-')
+              .replace(minusMinusRegex, '+');
           }
         }
       }
-    } catch (e) {
-      console.warn(e);
-    }
+      try {
+        if (factOperator.length !== 0) {
+          let F = string.match(factRegex);
 
-    try {
-      if (cosOperator.length !== 0) {
-        let G = string.match(cosRegex);
-
-        if (G.length !== 0) {
-          for (let z = 0; z < G.length; z++) {
-            let item = G[z];
-            let value = item.replace('cos(', '').replace(')', '');
-            let result = Math.cos(value);
-            string = string.replace(G[z], result);
+          if (F.length !== 0) {
+            for (let z = 0; z < F.length; z++) {
+              let item = F[z];
+              let value = item.replace('!', '');
+              let result = factorial(value);
+              string = string.replace(F[z], result);
+            }
           }
         }
+      } catch (e) {
+        console.warn(e);
       }
-    } catch (e) {
-      console.warn(e);
-    }
-    try {
-      if (cosInverseOperator.length !== 0) {
-        let G = string.match(cosInverseRegex);
+      try {
+        if (sinOperator.length !== 0) {
+          let G = string.match(sinRegexWithoutOperator);
 
-        if (G.length !== 0) {
-          for (let z = 0; z < G.length; z++) {
-            let item = G[z];
-            let value = item.replace('cosinv(', '').replace(')', '');
-            let result = Math.acos(value);
-            string = string.replace(G[z], result);
+          if (G.length !== 0) {
+            for (let z = 0; z < G.length; z++) {
+              let item = G[z];
+              let value = item.replace('sin', '');
+              let result = Math.sin(value);
+              string = string.replace(G[z], result);
+            }
           }
         }
+      } catch (e) {
+        console.warn(e);
       }
-    } catch (e) {
-      console.warn(e);
-    }
-    try {
-      if (logOperator.length !== 0) {
-        let G = string.match(logRegex);
+      try {
+        if (cosOperator.length !== 0) {
+          let G = string.match(cosRegexWithoutOperator);
 
-        if (G.length !== 0) {
-          for (let z = 0; z < G.length; z++) {
-            let item = G[z];
-            let value = item.replace('log(', '').replace(')', '');
-            let result = Math.log10(value);
-            string = string.replace(G[z], result);
+          if (G.length !== 0) {
+            for (let z = 0; z < G.length; z++) {
+              let item = G[z];
+              let value = item.replace('cos', '');
+              let result = Math.cos(value);
+              string = string.replace(G[z], result);
+            }
           }
         }
+      } catch (e) {
+        console.warn(e);
       }
-    } catch (e) {
-      console.warn(e);
-    }
-    try {
-      if (lnOperator.length !== 0) {
-        let G = string.match(lnRegex);
+      try {
+        if (tanOperator.length !== 0) {
+          let G = string.match(tanRegexWithoutOperator);
 
-        if (G.length !== 0) {
-          for (let z = 0; z < G.length; z++) {
-            let item = G[z];
-            let value = item.replace('ln(', '').replace(')', '');
-            let result = Math.log(value);
-            string = string.replace(G[z], result);
+          if (G.length !== 0) {
+            for (let z = 0; z < G.length; z++) {
+              let item = G[z];
+              let value = item.replace('tan', '');
+              let result = Math.tan(value);
+              string = string.replace(G[z], result);
+            }
           }
         }
+      } catch (e) {
+        console.warn(e);
       }
-    } catch (e) {
-      console.warn(e);
-    }
-    try {
-      if (rootOperator.length !== 0) {
-        let G = string.match(rootRegex);
+      try {
+        if (logOperator.length !== 0) {
+          let G = string.match(logRegexWithoutOperator);
 
-        if (G.length !== 0) {
-          for (let z = 0; z < G.length; z++) {
-            let item = G[z];
-            let value = item.replace('√', '');
-            let result = Math.sqrt(value);
-            string = string.replace(G[z], result);
+          if (G.length !== 0) {
+            for (let z = 0; z < G.length; z++) {
+              let item = G[z];
+              let value = item.replace('log', '');
+              let result = Math.log10(value);
+              string = string.replace(G[z], result);
+            }
           }
         }
+      } catch (e) {
+        console.warn(e);
       }
-    } catch (e) {
-      console.warn(e);
-    }
-    try {
-      if (root3Operator.length !== 0) {
-        let G = string.match(root3Regex);
+      try {
+        if (lnOperator.length !== 0) {
+          let G = string.match(lnRegexWithoutOperator);
 
-        if (G.length !== 0) {
-          for (let z = 0; z < G.length; z++) {
-            let item = G[z];
-            let value = item.replace('∛', '');
-            let result = Math.cbrt(value);
-            string = string.replace(G[z], result);
+          if (G.length !== 0) {
+            for (let z = 0; z < G.length; z++) {
+              let item = G[z];
+
+              let value = item.replace('ln', '');
+              let result = Math.log(value);
+              string = string.replace(G[z], result);
+            }
           }
         }
+      } catch (e) {
+        console.warn(e);
       }
-    } catch (e) {
-      console.warn(e);
+
+      setResult(string);
+      showResult(true);
     }
-    if (divideOperator.length !== 0) {
-      let divisionParts = string.match(divideRegex);
-
-      if (divisionParts !== null) {
-        for (let i = 0; i < divisionParts.length; i++) {
-          let beforeString = divisionParts[i].substring(
-            0,
-            divisionParts[i].indexOf('/'),
-          );
-          let afterString = divisionParts[i].substring(
-            divisionParts[i].indexOf('/') + 1,
-            divisionParts[i].length,
-          );
-
-          let x = parseFloat(beforeString);
-          let y = parseFloat(afterString);
-          let result = x / y;
-
-          string = string.replace(
-            '(' + beforeString + '/' + afterString + ')',
-            result.toString(),
-          );
-
-          string = string.replace(
-            beforeString + '/' + afterString,
-            result.toString(),
-          );
-
-          string = string
-            .replace(plusMinusRegex, '-')
-            .replace(minusMinusRegex, '+');
-        }
-      }
-    }
-
-    if (multiplyOperator.length !== 0) {
-      let multiplyParts = string.match(multiplyRegex);
-
-      if (multiplyParts != null) {
-        for (let i = 0; i < multiplyParts.length; i++) {
-          let beforeString = multiplyParts[i].substring(
-            0,
-            multiplyParts[i].indexOf('*'),
-          );
-          let afterString = multiplyParts[i].substring(
-            multiplyParts[i].indexOf('*') + 1,
-            multiplyParts[i].length,
-          );
-
-          let x = parseFloat(beforeString);
-          let y = parseFloat(afterString);
-          let result = x * y;
-
-          string = string.replace(
-            '(' + beforeString + '*' + afterString + ')',
-            result.toString(),
-          );
-          string = string.replace(
-            beforeString + '*' + afterString,
-            result.toString(),
-          );
-
-          string = string
-            .replace(plusMinusRegex, '-')
-            .replace(minusMinusRegex, '+');
-        }
-      }
-    }
-    if (sumOperator.length !== 0) {
-      let sumParts = string.match(plusRegex);
-
-      if (sumParts !== null) {
-        for (let i = 0; i < sumParts.length; i++) {
-          let beforeString = sumParts[i].substring(
-            0,
-            sumParts[i].lastIndexOf('+'),
-          );
-
-          let afterString = sumParts[i].substring(
-            sumParts[i].lastIndexOf('+') + 1,
-            sumParts[i].length,
-          );
-
-          let x = parseFloat(beforeString);
-          let y = parseFloat(afterString);
-          let result = x + y;
-          string = string.replace(
-            '(' + beforeString + '+' + afterString + ')',
-            result.toString(),
-          );
-          string = string.replace(
-            beforeString + '+' + afterString,
-            result.toString(),
-          );
-
-          string = string
-            .replace(plusMinusRegex, '-')
-            .replace(minusMinusRegex, '+');
-        }
-        evaluate(string);
-      }
-    }
-
-    if (minusOperator.length !== 0) {
-      let minusParts = string.match(minusRegex);
-
-      if (minusParts != null) {
-        for (let i = 0; i < minusParts.length; i++) {
-          let beforeString = minusParts[i].substring(
-            0,
-            minusParts[i].lastIndexOf('-'),
-          );
-
-          let afterString = minusParts[i].substring(
-            minusParts[i].lastIndexOf('-') + 1,
-            minusParts[i].length,
-          );
-
-          let x = parseFloat(beforeString);
-          let y = parseFloat(afterString);
-          let result = x - y;
-          string = string.replace(
-            '(' + beforeString + '-' + afterString + ')',
-            result.toString(),
-          );
-
-          string = string.replace(
-            beforeString + '-' + afterString,
-            result.toString(),
-          );
-
-          string = string
-            .replace(plusMinusRegex, '-')
-            .replace(minusMinusRegex, '+');
-        }
-        evaluate(string);
-      }
-    }
-    try {
-      if (factOperator.length !== 0) {
-        let F = string.match(factRegex);
-
-        if (F.length !== 0) {
-          for (let z = 0; z < F.length; z++) {
-            let item = F[z];
-            let value = item.replace('!', '');
-            let result = factorial(value);
-            string = string.replace(F[z], result);
-          }
-        }
-      }
-    } catch (e) {
-      console.warn(e);
-    }
-    try {
-      if (sinOperator.length !== 0) {
-        let G = string.match(sinRegexWithoutOperator);
-
-        if (G.length !== 0) {
-          for (let z = 0; z < G.length; z++) {
-            let item = G[z];
-            let value = item.replace('sin', '');
-            let result = Math.sin(value);
-            string = string.replace(G[z], result);
-          }
-        }
-      }
-    } catch (e) {
-      console.warn(e);
-    }
-    try {
-      if (cosOperator.length !== 0) {
-        let G = string.match(cosRegexWithoutOperator);
-
-        if (G.length !== 0) {
-          for (let z = 0; z < G.length; z++) {
-            let item = G[z];
-            let value = item.replace('cos', '');
-            let result = Math.cos(value);
-            string = string.replace(G[z], result);
-          }
-        }
-      }
-    } catch (e) {
-      console.warn(e);
-    }
-    try {
-      if (tanOperator.length !== 0) {
-        let G = string.match(tanRegexWithoutOperator);
-
-        if (G.length !== 0) {
-          for (let z = 0; z < G.length; z++) {
-            let item = G[z];
-            let value = item.replace('tan', '');
-            let result = Math.tan(value);
-            string = string.replace(G[z], result);
-          }
-        }
-      }
-    } catch (e) {
-      console.warn(e);
-    }
-    try {
-      if (logOperator.length !== 0) {
-        let G = string.match(logRegexWithoutOperator);
-
-        if (G.length !== 0) {
-          for (let z = 0; z < G.length; z++) {
-            let item = G[z];
-            let value = item.replace('log', '');
-            let result = Math.log10(value);
-            string = string.replace(G[z], result);
-          }
-        }
-      }
-    } catch (e) {
-      console.warn(e);
-    }
-    try {
-      if (lnOperator.length !== 0) {
-        let G = string.match(lnRegexWithoutOperator);
-
-        if (G.length !== 0) {
-          for (let z = 0; z < G.length; z++) {
-            let item = G[z];
-
-            let value = item.replace('ln', '');
-            let result = Math.log(value);
-            string = string.replace(G[z], result);
-          }
-        }
-      }
-    } catch (e) {
-      console.warn(e);
-    }
-
-    setResult(string);
-    showResult(true);
   }
   function clearAll() {
     setmainText('');
@@ -592,6 +582,9 @@ const MainActivity = () => {
     cosOperator = [];
     tanOperator = [];
     factOperator = [];
+    sinInverseOperator = [];
+    cosInverseOperator = [];
+    tanInverseOperator = [];
   }
 
   function equals() {
