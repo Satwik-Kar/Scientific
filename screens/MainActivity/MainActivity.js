@@ -27,7 +27,7 @@ const MainActivity = () => {
   const [result, setResult] = useState('');
 
   const [mainTextIn, setmainTextIn] = useState('');
-  const [calculated, showResult] = useState(false);
+  const [calculated, setCalculated] = useState(false);
 
   function evaluate(string) {
     if (string.indexOf('(') !== -1) {
@@ -563,13 +563,13 @@ const MainActivity = () => {
       }
 
       setResult(string);
-      showResult(true);
+      setCalculated(true);
     }
   }
   function clearAll() {
     setmainText('');
     setmainTextIn('');
-    showResult(false);
+    setCalculated(false);
     setResult('');
     sumOperator = [];
     minusOperator = [];
@@ -628,12 +628,12 @@ const MainActivity = () => {
       try {
         evaluate(fText);
       } catch (error) {
-        setmainTextIn(error);
-        showResult(true);
+        setResult(error);
+        setCalculated(true);
       }
     } catch (e) {
-      showResult(true);
-      setmainTextIn('UNKNOWN ERROR');
+      setCalculated(true);
+      setResult('UNKNOWN ERROR');
     }
   }
 
@@ -738,18 +738,14 @@ const MainActivity = () => {
         break;
 
       case 'cos':
-        {
-          setmainText(mainText + 'cos(');
-          setmainTextIn(mainTextIn + 'cos(');
-        }
+        setmainText(mainText + 'cos(');
+        setmainTextIn(mainTextIn + 'cos(');
 
         break;
 
       case 'sin':
-        {
-          setmainText(mainText + 'sin(');
-          setmainTextIn(mainTextIn + 'sin(');
-        }
+        setmainText(mainText + 'sin(');
+        setmainTextIn(mainTextIn + 'sin(');
 
         break;
       case 'x²':
@@ -763,10 +759,8 @@ const MainActivity = () => {
 
         break;
       case 'tan':
-        {
-          setmainText(mainText + 'tan(');
-          setmainTextIn(mainTextIn + 'tan(');
-        }
+        setmainText(mainText + 'tan(');
+        setmainTextIn(mainTextIn + 'tan(');
 
         break;
       case 'log':
@@ -801,24 +795,18 @@ const MainActivity = () => {
         break;
 
       case 'sininv':
-        {
-          setmainText(mainText + 'sininv(');
-          setmainTextIn(mainTextIn + 'sininv(');
-        }
+        setmainText(mainText + 'sininv(');
+        setmainTextIn(mainTextIn + 'sininv(');
 
         break;
       case 'cosinv':
-        {
-          setmainText(mainText + 'cosinv(');
-          setmainTextIn(mainTextIn + 'cosinv(');
-        }
+        setmainText(mainText + 'cosinv(');
+        setmainTextIn(mainTextIn + 'cosinv(');
 
         break;
       case 'taninv':
-        {
-          setmainText(mainText + 'taninv(');
-          setmainTextIn(mainTextIn + 'taninv(');
-        }
+        setmainText(mainText + 'taninv(');
+        setmainTextIn(mainTextIn + 'taninv(');
 
         break;
       case '10power':
