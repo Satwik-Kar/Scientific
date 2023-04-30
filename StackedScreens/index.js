@@ -2,6 +2,8 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import WelcomeScreen from '../screens/WelcomeScreen/WelcomeScreen.js';
 import MainActivity from '../screens/MainActivity/MainActivity.js';
+import History from '../screens/MainActivity/History.js';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Stack = createNativeStackNavigator();
@@ -9,10 +11,10 @@ let x = false;
 
 const StackedScreens = () => {
   AsyncStorage.getItem('isWelcomed').then(asyncStorageRes => {
-    if (asyncStorageRes == 'true') {
-      x == true;
+    if (asyncStorageRes === 'true') {
+      x = true;
     } else {
-      x == false;
+      x = false;
     }
   });
   return (
@@ -31,6 +33,13 @@ const StackedScreens = () => {
         <Stack.Screen
           name="Main"
           component={MainActivity}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="History"
+          component={History}
           options={{
             headerShown: false,
           }}

@@ -6,7 +6,7 @@ import Row from '../../components/Row';
 //#c264ffone all 24/03/2023 = in(19:58) local history(in vs code Timeline)....... CHANGED BUILT-IN EVAL METHOD TO OWN EVALUATION METHOD
 import ButtonCalc from '../../components/ButtonCalc';
 import {Button, IconButton} from 'react-native-paper';
-const MainActivity = () => {
+const MainActivity = ({navigation}) => {
   let sumOperator;
   let minusOperator;
   let multiplyOperator;
@@ -887,7 +887,9 @@ const MainActivity = () => {
             alignSelf: 'flex-end',
             width: '25%',
           }}
-          onPress={() => {}}>
+          onPress={() => {
+            navigation.navigate('History');
+          }}>
           History
         </Button>
         <ScrollView contentContainerStyle={MainActivityStyles.scrollView}>
