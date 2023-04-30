@@ -5,6 +5,7 @@ import MainActivityStyles from './MainActivityStyles';
 import Row from '../../components/Row';
 //#c264ffone all 24/03/2023 = in(19:58) local history(in vs code Timeline)....... CHANGED BUILT-IN EVAL METHOD TO OWN EVALUATION METHOD
 import ButtonCalc from '../../components/ButtonCalc';
+import {Button, IconButton} from 'react-native-paper';
 const MainActivity = () => {
   let sumOperator;
   let minusOperator;
@@ -880,6 +881,15 @@ const MainActivity = () => {
           borderBottomEndRadius: 30,
           borderBottomStartRadius: 30,
         }}>
+        <Button
+          mode={'text'}
+          style={{
+            alignSelf: 'flex-end',
+            width: '25%',
+          }}
+          onPress={() => {}}>
+          History
+        </Button>
         <ScrollView contentContainerStyle={MainActivityStyles.scrollView}>
           <Text
             id="textCalc"

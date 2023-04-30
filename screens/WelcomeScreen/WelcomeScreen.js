@@ -8,10 +8,10 @@ import WelcomeScreenStyles from './WelcomeScreenStyles';
 let x = false;
 const WelcomeScreen = ({navigation}) => {
   AsyncStorage.getItem('isWelcomed').then(asyncStorageRes => {
-    if (asyncStorageRes == 'true') {
-      x == true;
+    if (asyncStorageRes === 'true') {
+      x = true;
     } else {
-      x == false;
+      x = false;
     }
   });
 
@@ -20,7 +20,8 @@ const WelcomeScreen = ({navigation}) => {
       <View style={WelcomeScreenStyles.viewAppIcon}>
         <Image
           style={WelcomeScreenStyles.appIcon}
-          source={require('../../android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png')}></Image>
+          source={require('../../android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png')}
+        />
       </View>
       <View style={WelcomeScreenStyles.btnNTxt}>
         <Text style={WelcomeScreenStyles.welcomeText}>
