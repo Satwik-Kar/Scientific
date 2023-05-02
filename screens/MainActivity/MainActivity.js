@@ -6,6 +6,7 @@ import Row from '../../components/Row';
 //#c264ffone all 24/03/2023 = in(19:58) local history(in vs code Timeline)....... CHANGED BUILT-IN EVAL METHOD TO OWN EVALUATION METHOD
 import ButtonCalc from '../../components/ButtonCalc';
 import {Button, IconButton} from 'react-native-paper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const MainActivity = ({navigation}) => {
   let sumOperator;
   let minusOperator;
@@ -29,7 +30,7 @@ const MainActivity = ({navigation}) => {
 
   const [mainTextIn, setmainTextIn] = useState('');
   const [calculated, setCalculated] = useState(false);
-
+  let Histories = [];
   function evaluate(string) {
     if (string.indexOf('(') !== -1) {
       let no_of_instances_brac_open = occurencesIndexes(string, '(', false);
@@ -47,6 +48,8 @@ const MainActivity = ({navigation}) => {
     }
   }
   function evaluateSimple(string) {
+    const fString = string;
+
     let resultRegex = /^-?\d+(\.\d+)?([eE][-+]?\d+)?$/g;
     const plusMinusRegex = /\+-/g;
     const minusMinusRegex = /--/g;
@@ -565,6 +568,23 @@ const MainActivity = ({navigation}) => {
 
       setResult(string);
       setCalculated(true);
+      AsyncStorage.getItem('histories')
+        .then(objectString => {
+          var date = new Date().getDate();
+          var month = new Date().getMonth() + 1;
+          var year = new Date().getFullYear();
+          Histories = JSON.parse(objectString);
+          Histories.push({
+            date: date + '/' + month + '/' + year,
+            mainText: fString,
+            answer: string,
+          });
+          let stringx = JSON.stringify(Histories);
+          AsyncStorage.setItem('histories', stringx)
+            .then(() => console.log('Object saved successfully!'))
+            .catch(error => console.log('Error saving object: ', error));
+        })
+        .catch(error => console.log('Error retrieving object: ', error));
     }
   }
   function clearAll() {
