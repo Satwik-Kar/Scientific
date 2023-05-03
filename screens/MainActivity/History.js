@@ -9,7 +9,11 @@ const History = ({navigation, route}) => {
   useEffect(() => {
     AsyncStorage.getItem('histories')
       .then(objectString => {
-        setHistories(JSON.parse(objectString));
+        if (objectString === null) {
+          setHistories([{date: 'No Histories Found'}]);
+        } else {
+          setHistories(JSON.parse(objectString));
+        }
       })
       .catch(error => console.log('Error retrieving object: ', error));
   });
@@ -21,12 +25,28 @@ const History = ({navigation, route}) => {
           <FlatList
             data={Histories}
             renderItem={({item}) => (
-              <View style={{elevation: 1, marginBottom: 12}}>
-                <Text style={{color: 'red'}}>{item.date}</Text>
+              <View style={{elevation: 4, marginBottom: 12}}>
+                <Text style={{fontSize: 24, color: 'grey', fontWeight: '500'}}>
+                  {item.date}
+                </Text>
 
-                <Text style={{color: 'red'}}>{item.mainText}</Text>
-                <Text style={{color: 'red', alignSelf: 'flex-end'}}>
-                  ANS: {item.answer}
+                <Text
+                  style={{
+                    alignSelf: 'flex-end',
+                    fontSize: 28,
+                    color: 'black',
+                    fontWeight: '500',
+                  }}>
+                  {item.mainText}
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 28,
+                    color: 'grey',
+                    alignSelf: 'flex-end',
+                    fontWeight: '500',
+                  }}>
+                  {item.answer}
                 </Text>
               </View>
             )}

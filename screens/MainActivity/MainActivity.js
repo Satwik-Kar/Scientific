@@ -25,12 +25,26 @@ const MainActivity = ({navigation}) => {
   let sinInverseOperator;
   let cosInverseOperator;
   let tanInverseOperator;
+  const monthNames = [
+    'Jan',
+    'Feb',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
   const [mainText, setmainText] = useState('');
   const [result, setResult] = useState('');
 
   const [mainTextIn, setmainTextIn] = useState('');
   const [calculated, setCalculated] = useState(false);
-  let Histories = [];
+
   function evaluate(string) {
     if (string.indexOf('(') !== -1) {
       let no_of_instances_brac_open = occurencesIndexes(string, '(', false);
@@ -570,12 +584,14 @@ const MainActivity = ({navigation}) => {
       setCalculated(true);
       AsyncStorage.getItem('histories')
         .then(objectString => {
+          let Histories;
           var date = new Date().getDate();
           var month = new Date().getMonth() + 1;
           var year = new Date().getFullYear();
+          var monthName = monthNames[month - 1];
           Histories = JSON.parse(objectString);
           Histories.push({
-            date: date + '/' + month + '/' + year,
+            date: date + '/' + monthName + '/' + year,
             mainText: fString,
             answer: string,
           });
@@ -584,7 +600,23 @@ const MainActivity = ({navigation}) => {
             .then(() => console.log('Object saved successfully!'))
             .catch(error => console.log('Error saving object: ', error));
         })
-        .catch(error => console.log('Error retrieving object: ', error));
+        .catch(error => {
+          console.log('Error retrieving object: ', error);
+          let Histories = [];
+          var date = new Date().getDate();
+          var month = new Date().getMonth() + 1;
+          var year = new Date().getFullYear();
+          var monthName = monthNames[month - 1];
+          Histories.push({
+            date: date + '/' + monthName + '/' + year,
+            mainText: fString,
+            answer: string,
+          });
+          let stringx = JSON.stringify(Histories);
+          AsyncStorage.setItem('histories', stringx)
+            .then(() => console.log('Object saved successfully!'))
+            .catch(error => console.log('Error saving object: ', error));
+        });
     }
   }
   function clearAll() {
