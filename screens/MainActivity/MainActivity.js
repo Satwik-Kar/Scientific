@@ -62,7 +62,7 @@ const MainActivity = ({navigation}) => {
     }
   }
   function evaluateSimple(string) {
-    const fString = string;
+    const fString = mainText;
 
     let resultRegex = /^-?\d+(\.\d+)?([eE][-+]?\d+)?$/g;
     const plusMinusRegex = /\+-/g;
@@ -585,14 +585,22 @@ const MainActivity = ({navigation}) => {
       AsyncStorage.getItem('histories')
         .then(objectString => {
           let Histories;
-          var date = new Date().getDate();
-          var month = new Date().getMonth() + 1;
-          var year = new Date().getFullYear();
+          var newDate = new Date();
+          var date = newDate.getDate();
+          var month = newDate.getMonth() + 1;
+          var year = newDate.getFullYear();
           var monthName = monthNames[month - 1];
+          var time =
+            newDate.getHours() +
+            ':' +
+            newDate.getMinutes() +
+            ':' +
+            newDate.getSeconds();
           Histories = JSON.parse(objectString);
           Histories.push({
             date: date + '/' + monthName + '/' + year,
             mainText: fString,
+            time: time,
             answer: string,
           });
           let stringx = JSON.stringify(Histories);
@@ -603,12 +611,20 @@ const MainActivity = ({navigation}) => {
         .catch(error => {
           console.log('Error retrieving object: ', error);
           let Histories = [];
-          var date = new Date().getDate();
-          var month = new Date().getMonth() + 1;
-          var year = new Date().getFullYear();
+          var newDate = new Date();
+          var date = newDate.getDate();
+          var month = newDate.getMonth() + 1;
+          var year = newDate.getFullYear();
           var monthName = monthNames[month - 1];
+          var time =
+            newDate.getHours() +
+            ':' +
+            newDate.getMinutes() +
+            ':' +
+            newDate.getSeconds();
           Histories.push({
             date: date + '/' + monthName + '/' + year,
+            time: time,
             mainText: fString,
             answer: string,
           });

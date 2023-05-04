@@ -19,17 +19,52 @@ const History = ({navigation, route}) => {
   });
 
   return (
-    <View style={{padding: 12}}>
+    <View
+      style={{
+        padding: 12,
+        height: '100%',
+        width: '100%',
+        backgroundColor: '#DFAFFE',
+      }}>
       <Card>
         <CardContent>
           <FlatList
             data={Histories}
+            ItemSeparatorComponent={() => (
+              <View
+                style={{
+                  backgroundColor: 'grey',
+                  width: '100%',
+                  height: 1,
+                }}></View>
+            )}
             renderItem={({item}) => (
               <View style={{elevation: 4, marginBottom: 12}}>
-                <Text style={{fontSize: 24, color: 'grey', fontWeight: '500'}}>
-                  {item.date}
-                </Text>
-
+                <View
+                  style={{
+                    flex: 1,
+                    flexDirection: 'row',
+                  }}>
+                  <Text
+                    style={{
+                      flex: 2.5,
+                      fontSize: 24,
+                      color: 'grey',
+                      fontWeight: '500',
+                    }}>
+                    {item.date}
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 24,
+                      flex: 1,
+                      color: 'grey',
+                      fontWeight: '500',
+                      alignSelf: 'flex-end',
+                    }}>
+                    {item.time}
+                  </Text>
+                </View>
                 <Text
                   style={{
                     alignSelf: 'flex-end',
