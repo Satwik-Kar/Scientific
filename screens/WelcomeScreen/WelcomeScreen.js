@@ -20,7 +20,7 @@ const WelcomeScreen = ({navigation}) => {
       <View style={WelcomeScreenStyles.viewAppIcon}>
         <Image
           style={WelcomeScreenStyles.appIcon}
-          source={require('../../android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png')}
+          source={require('../../android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png')}
         />
       </View>
       <View style={WelcomeScreenStyles.btnNTxt}>
