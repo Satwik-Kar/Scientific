@@ -938,7 +938,7 @@ const MainActivity = ({navigation}) => {
     }
   }
   return (
-    <View style={{flex: 1}}>
+    <View style={{flex: 1, backgroundColor: '#fff'}}>
       <View
         style={{
           flex: 1,
@@ -989,9 +989,10 @@ const MainActivity = ({navigation}) => {
         style={{
           flex: 2,
           margin: 2,
+          backgroundColor: 'rgba(155,0,255,0.2)',
           paddingTop: 5,
           borderColor: '#c264ff',
-          borderWidth: 1.5,
+          borderWidth: 3,
           borderRadius: 20,
         }}>
         <Row>
